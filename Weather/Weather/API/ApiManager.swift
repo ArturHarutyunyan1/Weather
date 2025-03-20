@@ -7,10 +7,12 @@
 
 import SwiftUI
 import Foundation
+import MapKit
 
 class ApiManager : ObservableObject {
     @Published var searchResults: [Results] = []
     @Published var errorMessage: String?
+    
     func fetchQuery(query: String) {
         let endpoint = URL(string: "https://geocoding-api.open-meteo.com/v1/search?name=\(query)&count=100&language=en&format=json")!
         let request = URLRequest(url: endpoint)

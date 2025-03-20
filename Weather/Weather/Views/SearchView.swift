@@ -19,7 +19,12 @@ struct SearchView: View {
                         ScrollView (.vertical, showsIndicators: false) {
                             ForEach(APIManager.searchResults, id: \.id) {result in
                                 HStack {
-                                    Text("\(result.name), \(result.country)")
+                                    Button(action: {
+                                        
+                                    }, label: {
+                                        Text("\(result.name), \(result.country)")
+                                    })
+                                    .foregroundStyle(.white)
                                     Spacer()
                                 }
                                 .padding()

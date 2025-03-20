@@ -15,3 +15,7 @@ struct Results : Codable {
     var admin4: String?
     
 }
+
+struct Search : Codable {
+    var results: [Results]
+}
