@@ -19,6 +19,8 @@ struct ContentView: View {
 }
 
 #Preview {
+    let apiManager = ApiManager()
     ContentView()
+        .environmentObject(apiManager)
         .preferredColorScheme(.dark)
 }

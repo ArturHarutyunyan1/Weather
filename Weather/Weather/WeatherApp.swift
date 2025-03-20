@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct WeatherApp: App {
+    @StateObject private var APIManager = ApiManager()
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(APIManager)
                 .preferredColorScheme(.dark)
         }
     }
