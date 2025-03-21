@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import CoreLocation
+import MapKit
 
 struct SearchView: View {
     @State private var searchText: String = ""
@@ -14,42 +14,49 @@ struct SearchView: View {
     @EnvironmentObject private var apiManager: ApiManager
     @StateObject private var locationManager = LocationManager()
     @State private var cities: [WeatherDetails] = []
+    @State private var selectedItem: WeatherDetails? = nil
+    @Namespace private var animation: Namespace.ID
     var body: some View {
-        NavigationView {
-            VStack {
-                if isFocused && searchText.count > 3 {
-                    if !apiManager.searchResults.isEmpty {
-                        ScrollView (.vertical, showsIndicators: false) {
-                            ForEach(apiManager.searchResults, id: \.id) {result in
-                                HStack {
-                                    Button(action: {
-                                        
-                                    }, label: {
-                                        Text("\(result.name), \(result.country)")
-                                    })
-                                    .foregroundStyle(.white)
-                                    Spacer()
+        ZStack {
+            NavigationView {
+                VStack {
+                    if isFocused && searchText.count > 3 {
+                        if !apiManager.searchResults.isEmpty {
+                            ScrollView(.vertical, showsIndicators: false) {
+                                ForEach(apiManager.searchResults, id: \.id) { result in
+                                    HStack {
+                                        Button(action: {
+                                            
+                                        }, label: {
+                                            Text("\(result.name), \(result.country)")
+                                        })
+                                        .foregroundStyle(.white)
+                                        Spacer()
+                                    }
+                                    .padding()
+                                    .frame(width: UIScreen.main.bounds.width * 0.9)
                                 }
-                                .padding()
-                                .frame(width: UIScreen.main.bounds.width * 0.9)
+                                Spacer()
                             }
-                            Spacer()
-                        }
-                    } else {
-                        Text("Nothing found")
-                    }
-                }
-                if !isFocused {
-                    ScrollView {
-                        ForEach(cities, id: \.id) {city in
-                            Text("\(city.city)")
+                        } else {
+                            Text("Nothing found")
                         }
                     }
+                    if !isFocused {
+                        ZStack {
+                            ScrollView {
+                                ForEach(cities, id: \.id) { city in
+                                    CardView(weather: $selectedItem, item: city, animation: animation)
+                                }
+                            }
+                            .zIndex(0)
+                        }
+                    }
                 }
+                .searchable(text: $searchText, prompt: Text("Search"))
+                .navigationTitle("Weather")
+                .searchFocused($isFocused)
             }
-            .searchable(text: $searchText, prompt: Text("Search"))
-            .navigationTitle("Weather")
-            .searchFocused($isFocused)
             .onAppear {
                 if CLLocationManager.locationServicesEnabled() {
                     locationManager.locationPermission()
@@ -69,13 +76,18 @@ struct SearchView: View {
                     }
                 }
             }
-            .onChange(of: searchText) {newValue, _ in
+            .onChange(of: searchText) { newValue, _ in
                 Task {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         apiManager.fetchQuery(query: newValue)
                     }
                 }
             }
+            if let selectedItem = selectedItem {
+                ExpandedCard(weather: $selectedItem, item: selectedItem, animation: animation)
+                    .zIndex(1)
+            }
         }
+        .animation(.spring(response: 0.2, dampingFraction: 0.90, blendDuration: 0.2), value: selectedItem)
     }
 }
