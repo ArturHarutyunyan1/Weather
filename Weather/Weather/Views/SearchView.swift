@@ -22,7 +22,7 @@ struct SearchView: View {
         ZStack {
             NavigationStack {
                 VStack {
-                    if isFocused && searchText.count > 3 {
+                    if isFocused {
                         if !apiManager.searchResults.isEmpty {
                             ScrollView(.vertical, showsIndicators: false) {
                                 ForEach(apiManager.searchResults, id: \.id) { result in
@@ -56,7 +56,7 @@ struct SearchView: View {
                     }
                     if !isFocused {
                         ZStack {
-                            ScrollView {
+                            ScrollView (.vertical, showsIndicators: false) {
                                 ForEach(cities, id: \.id) { city in
                                     CardView(weather: $selectedItem, item: city, animation: animation)
                                 }
@@ -68,9 +68,11 @@ struct SearchView: View {
                 .sheet(isPresented: $show) {
                     VStack {
                         if let details = apiManager.weatherDetails {
-                            Text("\(details.current.temperature_2m)")
+                            WeatherDetailsView(weather: details)
                         } else {
-                            Text("NIGGA")
+                            if let error = apiManager.errorMessage {
+                                Text("Error - \(error)")
+                            }
                         }
                     }
                 }
