@@ -25,13 +25,13 @@ struct ReverseGeocoding : Codable {
         var city: String
         var country: String
     }
+    var place_id: Int
     var address: Address
 }
 
-struct WeatherDetails : Identifiable, Hashable {
+struct WeatherDetails : Identifiable, Hashable, Encodable, Decodable {
     var id: Int
     var city: String
     var country: String
     var admin4: String?
-    var color: Color
 }

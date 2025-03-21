@@ -13,6 +13,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager: CLLocationManager
     @Published var latitude: Double? = nil
     @Published var longitude: Double? = nil
+    @Published var status: Bool = false
     
     override init() {
         locationManager = CLLocationManager()
@@ -33,6 +34,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedAlways || status == .authorizedWhenInUse {
             locationManager.startUpdatingLocation()
+            self.status = true
         }
     }
 }

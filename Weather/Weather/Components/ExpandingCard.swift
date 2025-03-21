@@ -15,7 +15,7 @@ struct CardView: View {
         ZStack {
             VStack {
                 RoundedRectangle(cornerRadius: 15)
-                    .fill(item.color)
+                    .fill(.blue)
             }
             .matchedGeometryEffect(id: item.id, in: animation)
             .frame(width: UIScreen.main.bounds.width * 0.9, height: 150)
@@ -42,7 +42,7 @@ struct ExpandedCard: View {
             ZStack {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
-            .background(item.color)
+            .background(.blue)
             .matchedGeometryEffect(id: item.id, in: animation)
         }
         .transition(.opacity)
