@@ -5,17 +5,33 @@
 //  Created by Artur Harutyunyan on 21.03.25.
 //
 
-struct Results : Codable {
-    var id: Int
-    var name: String
-    var latitude: Double
-    var longitude: Double
-    var country_code: String
-    var country: String
-    var admin4: String?
-    
-}
+import SwiftUI
 
 struct Search : Codable {
+    struct Results : Codable {
+        var id: Int
+        var name: String
+        var latitude: Double
+        var longitude: Double
+        var country_code: String
+        var country: String
+        var admin4: String?
+    }
     var results: [Results]
+}
+
+struct ReverseGeocoding : Codable {
+    struct Address : Codable {
+        var city: String
+        var country: String
+    }
+    var address: Address
+}
+
+struct WeatherDetails : Identifiable, Hashable {
+    var id: Int
+    var city: String
+    var country: String
+    var admin4: String?
+    var color: Color
 }

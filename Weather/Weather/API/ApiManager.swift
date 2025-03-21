@@ -10,8 +10,9 @@ import Foundation
 import MapKit
 
 class ApiManager : ObservableObject {
-    @Published var searchResults: [Results] = []
+    @Published var searchResults: [Search.Results] = []
     @Published var errorMessage: String?
+    @Published var reversedResult: ReverseGeocoding? = nil
     
     func fetchQuery(query: String) {
         let endpoint = URL(string: "https://geocoding-api.open-meteo.com/v1/search?name=\(query)&count=100&language=en&format=json")!
@@ -54,5 +55,37 @@ class ApiManager : ObservableObject {
                 }
             }
         }.resume()
+    }
+    @MainActor
+    func reverseGeocoding(lat: Double, lon: Double) async {
+        let endpoint = URL(string: "https://nominatim.openstreetmap.org/reverse?lat=\(lat)&lon=\(lon)&format=json")!
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "GET"
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Invalid response"
+                }
+                return
+            }
+            guard httpResponse.statusCode == 200 else {
+                DispatchQueue.main.async {
+                    self.errorMessage = httpResponse.statusCode == 404 ? "Nothing found" : "Something went wrong"
+                }
+                return
+            }
+            let decoder = JSONDecoder()
+            let decodedData = try decoder.decode(ReverseGeocoding.self, from: data)
+            
+            DispatchQueue.main.async {
+                self.reversedResult = decodedData
+            }
+        } catch {
+            self.errorMessage = "Something went wrong"
+            return
+        }
     }
 }

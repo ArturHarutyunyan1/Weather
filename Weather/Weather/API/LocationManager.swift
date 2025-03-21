@@ -11,8 +11,8 @@ import MapKit
 
 class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager: CLLocationManager
-    @Published var latitude: Double?
-    @Published var longitude: Double?
+    @Published var latitude: Double? = nil
+    @Published var longitude: Double? = nil
     
     override init() {
         locationManager = CLLocationManager()

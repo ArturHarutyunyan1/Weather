@@ -9,18 +9,13 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
-    @StateObject private var locationManager = LocationManager()
+    @EnvironmentObject private var apiManager: ApiManager
     var body: some View {
         GeometryReader {geometry in
             VStack {
                 SearchView()
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
-        }
-        .onAppear {
-            if CLLocationManager.locationServicesEnabled() {
-                locationManager.locationPermission()
-            }
         }
     }
 }
