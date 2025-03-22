@@ -25,76 +25,76 @@ enum WeatherBackground: String {
         case .sunnyMorning:
             return WeatherStyle(
                 imageName: "sunny-morning",
-                foregroundColor: .sunnyMorningBackground,
-                backgroundColor: .sunnyMorningForeground
+                foregroundColor: .sunnyMorningForeground,
+                backgroundColor: .sunnyMorningBackground
             )
         case .sunnyDay:
             return WeatherStyle(
                 imageName: "sunny-day",
-                foregroundColor: .sunnyDayBackground,
-                backgroundColor: .sunnyDayForeground
+                foregroundColor: .sunnyDayForeground,
+                backgroundColor: .sunnyDayBackground
             )
         case .sunnyEvening:
             return WeatherStyle(
                 imageName: "sunny-evening",
-                foregroundColor: .sunnyEveningBackground,
-                backgroundColor: .sunnyEveningForeground
+                foregroundColor: .sunnyEveningForeground,
+                backgroundColor: .sunnyEveningBackground
             )
         
         case .cloudyMorning:
             return WeatherStyle(
                 imageName: "cloudy-morning",
-                foregroundColor: .cloudyMorningBackground,
-                backgroundColor: .cloudyMorningForeground
+                foregroundColor: .cloudyMorningForeground,
+                backgroundColor: .cloudyMorningBackground
             )
         case .cloudyDay:
             return WeatherStyle(
                 imageName: "cloudy-day",
-                foregroundColor: .cloudyDayBackground,
+                foregroundColor: .cloudyDayForeground,
                 backgroundColor: .cloudyDayBackground
             )
         case .cloudyEvening, .cloudyNight:
             return WeatherStyle(
                 imageName: "cloudy-night",
-                foregroundColor: .cloudyNightBackground,
-                backgroundColor: .cloudyNightForeground
+                foregroundColor: .cloudyNightForeground,
+                backgroundColor: .cloudyNightBackground
             )
         case .rainyMorning:
             return WeatherStyle(
                 imageName: "rain-morning",
-                foregroundColor: .rainyMorningBackground,
-                backgroundColor: .rainyMorningForeground
+                foregroundColor: .rainyMorningForeground,
+                backgroundColor: .rainyMorningBackground
             )
         case .rainyDay:
             return WeatherStyle(
                 imageName: "rain-day",
-                foregroundColor: .rainyDayBackground,
-                backgroundColor: .rainyDayForeground
+                foregroundColor: .rainyDayForeground,
+                backgroundColor: .rainyDayBackground
             )
         case .rainyNight:
             return WeatherStyle(
                 imageName: "rain-night",
-                foregroundColor: .rainyNightBackground,
-                backgroundColor: .rainyNightForeground
+                foregroundColor: .rainyNightForeground,
+                backgroundColor: .rainyNightBackground
             )
             
         case .snowyDay:
             return WeatherStyle(
                 imageName: "snow-day",
-                foregroundColor: .snowyDayBackground,
-                backgroundColor: .snowyDayForeground
+                foregroundColor: .snowyDayForeground,
+                backgroundColor: .snowyDayBackground
             )
         case .snowyNight:
             return WeatherStyle(
                 imageName: "snow-night",
-                foregroundColor: .snowyNightBackground,
-                backgroundColor: .snowyNightForeground
+                foregroundColor: .snowyNightForeground,
+                backgroundColor: .snowyNightBackground
             )
         default:
             return WeatherStyle(
                 imageName: "snow-day",
-                foregroundColor: .snowyDayBackground,
-                backgroundColor: .snowyDayForeground
+                foregroundColor: .snowyDayForeground,
+                backgroundColor: .snowyDayBackground
             )
         }
     }
@@ -109,6 +109,7 @@ struct Weather : Codable {
         var weather_code: Int
         var wind_direction_10m: Double
         var wind_speed_10m: Double
+        var apparent_temperature: Double
     }
     struct Status : Codable {
         var statusText: String?

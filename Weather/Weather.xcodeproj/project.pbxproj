@@ -10,9 +10,22 @@
 		F36FC7532D8C9FEB0009141D /* Weather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F3EBC3052D8EDE490009777A /* Exceptions for "Weather" folder in "Weather" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F36FC7522D8C9FEB0009141D /* Weather */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F36FC7552D8C9FEB0009141D /* Weather */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F3EBC3052D8EDE490009777A /* Exceptions for "Weather" folder in "Weather" target */,
+			);
 			path = Weather;
 			sourceTree = "<group>";
 		};
@@ -255,6 +268,7 @@
 				DEVELOPMENT_TEAM = Y35A5D3V8W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Weather/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Access to your location, to fetch weather data";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Access to your location, to fetch weather data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -285,6 +299,7 @@
 				DEVELOPMENT_TEAM = Y35A5D3V8W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Weather/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Access to your location, to fetch weather data";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Access to your location, to fetch weather data";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
