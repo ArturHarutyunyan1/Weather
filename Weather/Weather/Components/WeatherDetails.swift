@@ -24,68 +24,109 @@ struct WeatherDetailsView: View {
                 .edgesIgnoringSafeArea(.all)
                 .opacity(isActive ? 1 : 0)
                 .animation(.easeIn(duration: 0.5).delay(0.3), value: isActive)
+            
             if isActive {
-                VStack {
-//                    Current weather info
-                    if let icon = apiManager.weatherDetails?.status?.statusIcon,
-                       let temperature = apiManager.weatherDetails?.current.temperature_2m,
-                       let status = apiManager.weatherDetails?.status?.generalStatus,
-                       let city = apiManager.reversedResult?.address.city,
-                       let country = apiManager.reversedResult?.address.country,
-                       let apparent = apiManager.weatherDetails?.current.apparent_temperature,
-                       let wind = apiManager.weatherDetails?.current.wind_speed_10m {
-                        VStack {
+                ScrollView {
+                    VStack {
+                        if let icon = apiManager.weatherDetails?.status?.statusIcon,
+                           let temperature = apiManager.weatherDetails?.current.temperature_2m,
+                           let status = apiManager.weatherDetails?.status?.generalStatus,
+                           let city = apiManager.reversedResult?.address.city,
+                           let country = apiManager.reversedResult?.address.country,
+                           let apparent = apiManager.weatherDetails?.current.apparent_temperature,
+                           let wind = apiManager.weatherDetails?.current.wind_speed_10m {
                             VStack {
-                                Text("Currently")
-                                    .font(.custom("Poppins-Medium", size: 23))
-                            }
-                            .padding()
-                            VStack {
-                                HStack {
-                                    Image(systemName: apiManager.weatherDetails?.status?.statusIcon ?? "question.mark")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 73.61, height: 55.79)
-                                    Text("\(temperature, specifier: "%.1f")°")
-                                        .font(.custom("Poppins-Medium", size: 73))
-                                }
                                 VStack {
-                                    Text("\(status)")
-                                        .font(.custom("Poppins-Medium", size: 20))
+                                    Text("Currently")
+                                        .font(.custom("Poppins-Medium", size: 23))
                                 }
-                                VStack {
-                                    Text("\(city),\(country)")
-                                }
-                                VStack {
-                                    Text("\(fullDate)")
-                                }
+                                .padding()
+                                
                                 VStack {
                                     HStack {
-                                        Text("Feels like \(apparent, specifier: "%.1f")°")
-                                        Text("|")
+                                        Image(systemName: icon)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 73.61, height: 55.79)
+                                        Text("\(temperature, specifier: "%.1f")°")
+                                            .font(.custom("Poppins-Medium", size: 73))
+                                    }
+                                    VStack {
+                                        Text("\(status)")
+                                            .font(.custom("Poppins-Medium", size: 20))
+                                    }
+                                    VStack {
+                                        Text("\(city), \(country)")
+                                    }
+                                    VStack {
+                                        Text("\(fullDate)")
+                                    }
+                                    VStack {
                                         HStack {
-                                            Image(systemName: "wind")
-                                            Text("\(wind, specifier: "%.1f")km/h")
+                                            Text("Feels like \(apparent, specifier: "%.1f")°")
+                                            Text("|")
+                                            HStack {
+                                                Image(systemName: "wind")
+                                                Text("\(wind, specifier: "%.1f")km/h")
+                                            }
                                         }
                                     }
                                 }
+                                .padding(.vertical, 10)
                             }
-                            .padding(.vertical, 10)
+                            .padding()
+                            .frame(width: UIScreen.main.bounds.width * 0.9)
+                            .background(weatherStyle.backgroundColor)
+                            .foregroundStyle(weatherStyle.foregroundColor)
+                            .cornerRadius(20)
+                            if let hourly = apiManager.weatherDetails?.hourly {
+                                if let currentDate = apiManager.weatherDetails?.current.time.split(separator: "T").first {
+                                    let filteredIndices = hourly.time.indices.filter {
+                                        hourly.time[$0].split(separator: "T").first == currentDate
+                                    }
+                                    ScrollView (.horizontal, showsIndicators: false) {
+                                        HStack {
+                                            ForEach (filteredIndices, id: \.self) {index in
+                                                VStack {
+                                                    if let time = hourly.time[index].split(separator: "T").last?.split(separator: ":").first {
+                                                        Text("\(time)")
+                                                        if let icon = apiManager.weatherDetails?.statusList?.statusIcon?[index] {
+                                                            Image(systemName: icon)
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fit)
+                                                                .frame(width: 30, height: 30)
+                                                        }
+                                                        Text("\(hourly.temperature_2m[index], specifier: "%.1f")°")
+                                                        if let status = apiManager.weatherDetails?.statusList?.generalStatus?[index] {
+                                                            Text("\(status)")
+                                                        }
+                                                    }
+                                                }
+                                                .padding()
+                                            }
+                                        }
+                                        .padding()
+                                    }
+                                    .frame(width: UIScreen.main.bounds.width * 0.9)
+                                    .background(weatherStyle.backgroundColor.opacity(0.2).background(.ultraThinMaterial))
+                                    .foregroundStyle(.white)
+                                    .cornerRadius(20)
+                                }
+                            }
                         }
-                        .padding()
-                        .frame(width: UIScreen.main.bounds.width * 0.9)
-                        .background(weatherStyle.backgroundColor)
-                        .foregroundStyle(weatherStyle.foregroundColor)
-                        .cornerRadius(20)
                     }
+                    .padding(.vertical, 20)
                 }
+                .scrollIndicators(.hidden)
+                .padding(.vertical, 30)
             }
         }
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.9).delay(0.1)) {
+            withAnimation(.easeInOut(duration: 0.5).delay(0.3)) {
                 isActive = true
             }
             getTimeOfTheDay()
+            setIcons()
         }
     }
 
@@ -117,6 +158,11 @@ struct WeatherDetailsView: View {
             return getNightTimeBackground(for: status)
         default:
             return getDayTimeBackground(for: status)
+        }
+    }
+    func setIcons() {
+        for index in apiManager.weatherDetails?.hourly.weather_code ?? [] {
+            apiManager.mapWeatherCodeToStatus(index, type: 1)
         }
     }
 }

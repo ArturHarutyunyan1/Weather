@@ -124,9 +124,15 @@ struct Weather : Codable {
         var statusIcon: String?
         var generalStatus: String?
     }
+    struct StatusArray: Codable {
+        var statusText: [String]?
+        var statusIcon: [String]?
+        var generalStatus: [String]?
+    }
     var current: Current
     var hourly: Hourly
     var status: Status?
+    var statusList: StatusArray?
 }
 
 

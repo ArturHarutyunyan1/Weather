@@ -76,13 +76,13 @@ class ApiManager : ObservableObject {
         do {
             let decodedData: Weather = try await performRequest(endpoint: "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunset,uv_index_clear_sky_max,sunrise&hourly=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m,visibility&current=apparent_temperature,temperature_2m,is_day,relative_humidity_2m,weather_code,wind_direction_10m,wind_speed_10m&timezone=auto", type: Weather.self)
             self.weatherDetails = decodedData
-            mapWeatherCodeToStatus((self.weatherDetails?.current.weather_code)!)
+            mapWeatherCodeToStatus((self.weatherDetails?.current.weather_code)!, type: 0)
         } catch {
             handleError(error)
         }
     }
     
-    func mapWeatherCodeToStatus(_ code: Int) {
+    func mapWeatherCodeToStatus(_ code: Int, type: Int) {
         if weatherDetails?.status == nil {
             weatherDetails?.status = Weather.Status(statusText: nil, statusIcon: nil, generalStatus: nil)
         }
@@ -109,11 +109,23 @@ class ApiManager : ObservableObject {
             85: ("Light snow showers", "cloud.snow.fill", "Snow"),
             86: ("Heavy snow showers", "cloud.snow.fill", "Snow")
         ]
-        
         if let status = statusMapping[code] {
-            weatherDetails?.status?.statusText = status.0
-            weatherDetails?.status?.statusIcon = status.1
-            weatherDetails?.status?.generalStatus = status.2
+            if type == 0 {
+                weatherDetails?.status?.statusText = status.0
+                weatherDetails?.status?.statusIcon = status.1
+                weatherDetails?.status?.generalStatus = status.2
+            } else {
+                var statusArray = Weather.StatusArray(statusText: [], statusIcon: [], generalStatus: [])
+                
+                for code in weatherDetails?.hourly.weather_code ?? [] {
+                    if let status = statusMapping[code] {
+                        statusArray.statusText?.append(status.0)
+                        statusArray.statusIcon?.append(status.1)
+                        statusArray.generalStatus?.append(status.2)
+                    }
+                }
+                weatherDetails?.statusList = statusArray
+            }
         } else {
             weatherDetails?.status?.statusText = "Unknown"
             weatherDetails?.status?.statusIcon = "questionmark.circle"
