@@ -12,18 +12,20 @@ struct WeatherDetailsView: View {
     @EnvironmentObject private var apiManager: ApiManager
     @State private var backgroundImage: String = ""
     @State private var isActive: Bool = false
+    @State private var weatherStyle: WeatherStyle = WeatherBackground.sunnyDay.style
     var body: some View {
         GeometryReader {geometry in
             ZStack {
                 if isActive {
-                    Image(backgroundImage)
+                    Image(weatherStyle.imageName)
                         .resizable()
                         .frame(width: geometry.size.width, height: geometry.size.height)
-                    Text("\(backgroundImage)")
+                    Text("\(weatherStyle.imageName)")
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
-            .background(.blue)
+            .background(weatherStyle.backgroundColor)
+            .foregroundStyle(weatherStyle.foregroundColor)
         }
         .transition(.opacity)
         .edgesIgnoringSafeArea(.all)
@@ -41,9 +43,9 @@ struct WeatherDetailsView: View {
     func getTimeOfTheDay() {
         guard let time = weather.current.time.split(separator: "T").last,
               let hours = Int(time.split(separator: ":").first ?? "") else {return}
-        backgroundImage = getBackgroundImage(for: hours)
+        weatherStyle = getBackgroundImage(for: hours)
     }
-    func getBackgroundImage(for hour: Int) -> String {
+    func getBackgroundImage(for hour: Int) -> WeatherStyle {
         let status = weather.status?.generalStatus ?? "Clear"
         
         switch (hour) {
@@ -60,60 +62,60 @@ struct WeatherDetailsView: View {
             return getDayTimeBackground(for: status)
         }
     }
-    func getMorningTimeBackground(for status: String) -> String {
+    func getMorningTimeBackground(for status: String) -> WeatherStyle {
         switch (status) {
         case "Clear":
-            return WeatherBackground.sunnyMorning.imageName
+            return WeatherBackground.sunnyMorning.style
         case "Cloudy":
-            return WeatherBackground.cloudyMorning.imageName
+            return WeatherBackground.cloudyMorning.style
         case "Rain":
-            return WeatherBackground.rainyMorning.imageName
+            return WeatherBackground.rainyMorning.style
         case "Snow":
-            return WeatherBackground.snowyDay.imageName
+            return WeatherBackground.snowyDay.style
         default:
-            return WeatherBackground.sunnyMorning.imageName
+            return WeatherBackground.sunnyMorning.style
         }
     }
-    func getDayTimeBackground(for status: String) -> String {
+    func getDayTimeBackground(for status: String) -> WeatherStyle {
         switch (status) {
         case "Clear":
-            return WeatherBackground.sunnyDay.imageName
+            return WeatherBackground.sunnyDay.style
         case "Cloudy":
-            return WeatherBackground.cloudyDay.imageName
+            return WeatherBackground.cloudyDay.style
         case "Rain":
-            return WeatherBackground.rainyDay.imageName
+            return WeatherBackground.rainyDay.style
         case "Snow":
-            return WeatherBackground.snowyDay.imageName
+            return WeatherBackground.snowyDay.style
         default:
-            return WeatherBackground.sunnyDay.imageName
+            return WeatherBackground.sunnyDay.style
         }
     }
-    func getEveningTimeBackground(for status: String) -> String {
+    func getEveningTimeBackground(for status: String) -> WeatherStyle {
         switch (status) {
         case "Clear":
-            return WeatherBackground.sunnyEvening.imageName
+            return WeatherBackground.sunnyEvening.style
         case "Cloudy":
-            return WeatherBackground.cloudyEvening.imageName
+            return WeatherBackground.cloudyEvening.style
         case "Rain":
-            return WeatherBackground.rainyNight.imageName
+            return WeatherBackground.rainyNight.style
         case "Snow":
-            return WeatherBackground.snowyNight.imageName
+            return WeatherBackground.snowyNight.style
         default:
-            return WeatherBackground.sunnyEvening.imageName
+            return WeatherBackground.sunnyEvening.style
         }
     }
-    func getNightTimeBackground(for status: String) -> String {
+    func getNightTimeBackground(for status: String) -> WeatherStyle {
         switch (status) {
         case "Clear":
-            return WeatherBackground.sunnyEvening.imageName
+            return WeatherBackground.sunnyEvening.style
         case "Cloudy":
-            return WeatherBackground.cloudyNight.imageName
+            return WeatherBackground.cloudyNight.style
         case "Rain":
-            return WeatherBackground.rainyNight.imageName
+            return WeatherBackground.rainyNight.style
         case "Snow":
-            return WeatherBackground.snowyNight.imageName
+            return WeatherBackground.snowyNight.style
         default:
-            return WeatherBackground.sunnyEvening.imageName
+            return WeatherBackground.sunnyEvening.style
         }
     }
 }

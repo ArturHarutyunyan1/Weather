@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+struct WeatherStyle {
+    let imageName: String
+    let foregroundColor: Color
+    let backgroundColor: Color
+}
+
 enum WeatherBackground: String {
     case sunrise, afternoon, evening, night
     case sunnyMorning, sunnyDay, sunnyEvening
@@ -14,37 +20,82 @@ enum WeatherBackground: String {
     case rainyMorning, rainyDay, rainyNight
     case snowyDay, snowyNight
     
-    var imageName: String {
+    var style: WeatherStyle {
         switch (self) {
         case .sunnyMorning:
-            return "sunny-morning"
+            return WeatherStyle(
+                imageName: "sunny-morning",
+                foregroundColor: .sunnyMorningBackground,
+                backgroundColor: .sunnyMorningForeground
+            )
         case .sunnyDay:
-            return "sunny-day"
+            return WeatherStyle(
+                imageName: "sunny-day",
+                foregroundColor: .sunnyDayBackground,
+                backgroundColor: .sunnyDayForeground
+            )
         case .sunnyEvening:
-            return "sunny-evening"
+            return WeatherStyle(
+                imageName: "sunny-evening",
+                foregroundColor: .sunnyEveningBackground,
+                backgroundColor: .sunnyEveningForeground
+            )
         
         case .cloudyMorning:
-            return "cloudy-morning"
+            return WeatherStyle(
+                imageName: "cloudy-morning",
+                foregroundColor: .cloudyMorningBackground,
+                backgroundColor: .cloudyMorningForeground
+            )
         case .cloudyDay:
-            return "cloudy-day"
-        case .cloudyEvening:
-            return "cloudy-evening"
-        case .cloudyNight:
-            return "cloudy-night"
-        
+            return WeatherStyle(
+                imageName: "cloudy-day",
+                foregroundColor: .cloudyDayBackground,
+                backgroundColor: .cloudyDayBackground
+            )
+        case .cloudyEvening, .cloudyNight:
+            return WeatherStyle(
+                imageName: "cloudy-night",
+                foregroundColor: .cloudyNightBackground,
+                backgroundColor: .cloudyNightForeground
+            )
         case .rainyMorning:
-            return "rain-morning"
+            return WeatherStyle(
+                imageName: "rain-morning",
+                foregroundColor: .rainyMorningBackground,
+                backgroundColor: .rainyMorningForeground
+            )
         case .rainyDay:
-            return "rain-day"
+            return WeatherStyle(
+                imageName: "rain-day",
+                foregroundColor: .rainyDayBackground,
+                backgroundColor: .rainyDayForeground
+            )
         case .rainyNight:
-            return "rain-night"
+            return WeatherStyle(
+                imageName: "rain-night",
+                foregroundColor: .rainyNightBackground,
+                backgroundColor: .rainyNightForeground
+            )
             
         case .snowyDay:
-            return "snow-day"
+            return WeatherStyle(
+                imageName: "snow-day",
+                foregroundColor: .snowyDayBackground,
+                backgroundColor: .snowyDayForeground
+            )
         case .snowyNight:
-            return "snow-night"
+            return WeatherStyle(
+                imageName: "snow-night",
+                foregroundColor: .snowyNightBackground,
+                backgroundColor: .snowyNightForeground
+            )
         default:
-            return ""
+            return WeatherStyle(
+                imageName: "snow-day",
+                foregroundColor: .snowyDayBackground,
+                backgroundColor: .snowyDayForeground
+            )
         }
     }
 }

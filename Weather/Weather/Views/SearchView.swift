@@ -13,7 +13,7 @@ struct SearchView: View {
     @FocusState private var isFocused: Bool
     @EnvironmentObject private var apiManager: ApiManager
     @StateObject private var locationManager = LocationManager()
-    @State private var cities: [WeatherDetails] = []
+    @Binding var cities: [WeatherDetails]
     @State private var selectedItem: WeatherDetails? = nil
     @Namespace private var animation: Namespace.ID
     @State private var show: Bool = false
@@ -80,28 +80,9 @@ struct SearchView: View {
                 .navigationTitle("Weather")
                 .searchFocused($isFocused)
             }
-            .onAppear {
-                withAnimation {
+            .onAppear() {
+                Task {
                     loadCities()
-                }
-                if CLLocationManager.locationServicesEnabled() {
-                    locationManager.locationPermission()
-                }
-            }
-            .onChange(of: locationManager.status) {
-                if let lat = locationManager.latitude, let lon = locationManager.longitude {
-                    Task {
-                        await apiManager.reverseGeocoding(lat: lat, lon: lon)
-                            if let city = apiManager.reversedResult?.address.city,
-                               let country = apiManager.reversedResult?.address.country,
-                               let id = apiManager.reversedResult?.place_id{
-                                if !cities.contains(where: {$0.id == id && $0.city == city && $0.country == country}) {
-                                    let newCity = WeatherDetails(id: id, city: city, country: country, admin4: nil)
-                                    cities.append(newCity)
-                                    saveCities()
-                                }
-                        }
-                    }
                 }
             }
             .onChange(of: searchText) { newValue, _ in
@@ -111,14 +92,7 @@ struct SearchView: View {
                     }
                 }
             }
-            VStack {
-                if let selectedItem = selectedItem {
-                    ExpandedCard(weather: $selectedItem, item: selectedItem, animation: animation)
-                        .zIndex(1)
-                }
-            }
         }
-        .animation(.spring(response: 0.2, dampingFraction: 0.90, blendDuration: 0.2), value: selectedItem)
     }
     private func loadCities() {
         if let savedCities = UserDefaults.standard.object(forKey: key) as? Data {
