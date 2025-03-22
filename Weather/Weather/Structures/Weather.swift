@@ -111,11 +111,61 @@ struct Weather : Codable {
         var wind_speed_10m: Double
         var apparent_temperature: Double
     }
+    struct Hourly : Codable {
+        var time: [String]
+        var temperature_2m: [Double]
+        var weather_code: [Int]
+        var wind_speed_10m: [Double]
+        var relative_humidity_2m: [Int]
+        var visibility: [Int]
+    }
     struct Status : Codable {
         var statusText: String?
         var statusIcon: String?
         var generalStatus: String?
     }
     var current: Current
+    var hourly: Hourly
     var status: Status?
+}
+
+
+func getMorningTimeBackground(for status: String) -> WeatherStyle {
+    switch status {
+    case "Clear": return WeatherBackground.sunnyMorning.style
+    case "Cloudy": return WeatherBackground.cloudyMorning.style
+    case "Rain": return WeatherBackground.rainyMorning.style
+    case "Snow": return WeatherBackground.snowyDay.style
+    default: return WeatherBackground.sunnyMorning.style
+    }
+}
+
+func getDayTimeBackground(for status: String) -> WeatherStyle {
+    switch status {
+    case "Clear": return WeatherBackground.sunnyDay.style
+    case "Cloudy": return WeatherBackground.cloudyDay.style
+    case "Rain": return WeatherBackground.rainyDay.style
+    case "Snow": return WeatherBackground.snowyDay.style
+    default: return WeatherBackground.sunnyDay.style
+    }
+}
+
+func getEveningTimeBackground(for status: String) -> WeatherStyle {
+    switch status {
+    case "Clear": return WeatherBackground.sunnyEvening.style
+    case "Cloudy": return WeatherBackground.cloudyEvening.style
+    case "Rain": return WeatherBackground.rainyNight.style
+    case "Snow": return WeatherBackground.snowyNight.style
+    default: return WeatherBackground.sunnyEvening.style
+    }
+}
+
+func getNightTimeBackground(for status: String) -> WeatherStyle {
+    switch status {
+    case "Clear": return WeatherBackground.sunnyEvening.style
+    case "Cloudy": return WeatherBackground.cloudyNight.style
+    case "Rain": return WeatherBackground.rainyNight.style
+    case "Snow": return WeatherBackground.snowyNight.style
+    default: return WeatherBackground.sunnyEvening.style
+    }
 }
