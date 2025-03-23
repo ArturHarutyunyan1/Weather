@@ -109,7 +109,9 @@ struct Weather : Codable {
         var weather_code: Int
         var wind_direction_10m: Double
         var wind_speed_10m: Double
+        var wind_gusts_10m: Double
         var apparent_temperature: Double
+        var precipitation: Double
     }
     struct Hourly : Codable {
         var time: [String]
@@ -118,6 +120,14 @@ struct Weather : Codable {
         var wind_speed_10m: [Double]
         var relative_humidity_2m: [Int]
         var visibility: [Int]
+    }
+    struct Daily : Codable {
+        var time: [String]
+        var weather_code: [Int]
+        var temperature_2m_max: [Double]
+        var temperature_2m_min: [Double]
+        var sunset: [String]
+        var sunrise: [String]
     }
     struct Status : Codable {
         var statusText: String?
@@ -131,8 +141,10 @@ struct Weather : Codable {
     }
     var current: Current
     var hourly: Hourly
+    var daily: Daily
     var status: Status?
     var statusList: StatusArray?
+    var dailyList: StatusArray?
 }
 
 

@@ -102,16 +102,42 @@ struct WeatherDetailsView: View {
                                                         }
                                                     }
                                                 }
-                                                .padding()
+                                                .padding(.horizontal, 10)
                                             }
                                         }
                                         .padding()
                                     }
                                     .frame(width: UIScreen.main.bounds.width * 0.9)
-                                    .background(weatherStyle.backgroundColor.opacity(0.2).background(.ultraThinMaterial))
-                                    .foregroundStyle(.white)
+                                    .background(.ultraThinMaterial)
                                     .cornerRadius(20)
                                 }
+                            }
+                            if let daily = apiManager.weatherDetails?.daily {
+                                VStack {
+                                    ForEach(daily.time.indices, id:\.self) {index in
+                                        HStack {
+                                            Text("Mon")
+                                            if let icon = apiManager.weatherDetails?.dailyList?.statusIcon?[index] {
+                                                Image(systemName: icon)
+                                            }
+                                            if let min = apiManager.weatherDetails?.daily.temperature_2m_min[index],
+                                               let max = apiManager.weatherDetails?.daily.temperature_2m_max[index] {
+                                                Text("\(min, specifier: "%.1f")°")
+                                                VStack {
+                                                    ProgressView("", value: min, total: max)
+                                                        .tint(weatherStyle.backgroundColor)
+                                                    Spacer()
+                                                    Spacer()
+                                                }
+                                                Text("\(max, specifier: "%.1f")°")
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding()
+                                .frame(width: UIScreen.main.bounds.width * 0.9)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(20)
                             }
                         }
                     }
@@ -119,6 +145,7 @@ struct WeatherDetailsView: View {
                 }
                 .scrollIndicators(.hidden)
                 .padding(.vertical, 30)
+                .frame(height: UIScreen.main.bounds.height)
             }
         }
         .onAppear {
@@ -163,6 +190,9 @@ struct WeatherDetailsView: View {
     func setIcons() {
         for index in apiManager.weatherDetails?.hourly.weather_code ?? [] {
             apiManager.mapWeatherCodeToStatus(index, type: 1)
+        }
+        for index in apiManager.weatherDetails?.daily.weather_code ?? [] {
+            apiManager.mapWeatherCodeToStatus(index, type: 2)
         }
     }
 }
