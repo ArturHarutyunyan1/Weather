@@ -8,78 +8,92 @@
 import SwiftUI
 
 struct CardView: View {
-    @Binding var weather: WeatherDetails?
-    var item: WeatherDetails
+    @Binding var weather: Weather?
+    var item: Weather
     let animation: Namespace.ID
+    @State private var weatherStyle: WeatherStyle = WeatherBackground.rainyDay.style
+    @State private var a: String = ""
     var body: some View {
         ZStack {
             VStack {
                 RoundedRectangle(cornerRadius: 15)
-                    .fill(.blue)
+                    .fill(weatherStyle.backgroundColor)
             }
-            .matchedGeometryEffect(id: item.id, in: animation)
+            .matchedGeometryEffect(id: item.locationInfo?.id, in: animation)
             .frame(width: UIScreen.main.bounds.width * 0.9, height: 150)
-            HStack {
-                VStack {
-                    Text("\(item.city)")
-                    Text("\(item.country)")
+            .overlay(
+                HStack {
+                    if let icon = item.status?.statusIcon,
+                       let temperature = item.current?.temperature_2m,
+                       let status = item.status?.generalStatus,
+                       let city = item.locationInfo?.city,
+                       let country = item.locationInfo?.country {
+                        VStack {
+                            Image(systemName: icon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 50, height: 50)
+                            Text("\(status)")
+                        }
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            VStack {
+                                HStack {
+                                    Spacer()
+                                    Text("\(temperature, specifier: "%.1f")°")
+                                        .font(.custom("Poppins-Medium", size: 30))
+                                }
+                                HStack {
+                                    Spacer()
+                                    Text("\(country), \(city)")
+                                }
+                            }
+                        }
+                    }
                 }
-                .font(.system(size: 42))
-            }
+                    .foregroundStyle(weatherStyle.foregroundColor)
+                    .padding()
+            )
         }
         .onTapGesture {
-            weather = item
+            withAnimation {
+                weather = item
+            }
         }
+        .onAppear {
+            if let time = item.current?.time.split(separator: "T").last?.split(separator: ":").first {
+                weatherStyle = getBackgroundImage(for: Int(time)!, weather: item)
+            }
+        }
+
     }
 }
 
 struct ExpandedCard: View {
-    @Binding var weather: WeatherDetails?
-    var item: WeatherDetails
+    @Binding var weather: Weather?
+    var item: Weather
     let animation: Namespace.ID
-    @EnvironmentObject private var apiManager: ApiManager
+    @State private var weatherStyle: WeatherStyle = WeatherBackground.rainyDay.style
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background color for the expanded view
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.blue)
-                    .matchedGeometryEffect(id: item.id, in: animation)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                VStack {
-                    if let details = apiManager.weatherDetails {
-                        Text("Weather Details for \(item.city), \(item.country)")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .padding()
-
-                        // Display weather details
-//                        Text("Temperature: \(details.main.temp)°C")
-//                            .foregroundColor(.white)
-//                            .padding()
-//                        Text("Weather: \(details.weather.first?.description ?? "Unknown")")
-//                            .foregroundColor(.white)
-//                            .padding()
-//                        Text("Humidity: \(details.main.humidity)%")
-//                            .foregroundColor(.white)
-//                            .padding()
-                    } else {
-                        if let error = apiManager.errorMessage {
-                            Text("Error: \(error)")
-                                .foregroundColor(.red)
-                        }
-                    }
-                }
-                .padding()
+                WeatherDetailsView(weather: item)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
-            .transition(.opacity)
-            .edgesIgnoringSafeArea(.all)
+            .matchedGeometryEffect(id: item.locationInfo?.id, in: animation)
+            .background(weatherStyle.backgroundColor)
         }
+        .edgesIgnoringSafeArea(.all)
         .onTapGesture {
-            weather = nil // Close expanded view on tap
+            weather = nil
         }
-        .zIndex(999)
+        .onAppear {
+            if let time = item.current?.time.split(separator: "T").last?.split(separator: ":").first {
+                weatherStyle = getBackgroundImage(for: Int(time)!, weather: item)
+            }
+        }
     }
 }
+

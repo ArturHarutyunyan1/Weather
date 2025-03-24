@@ -54,6 +54,7 @@ class ApiManager : ObservableObject {
     @MainActor
     func searchQuery(query: String) async {
         do {
+            searchResults = []
             let decodedData: Search = try await performRequest(endpoint: "https://geocoding-api.open-meteo.com/v1/search?name=\(query)&count=100&language=en&format=json", type: Search.self)
             self.searchResults = decodedData.results
         } catch {
@@ -76,7 +77,7 @@ class ApiManager : ObservableObject {
         do {
             let decodedData: Weather = try await performRequest(endpoint: "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunset,uv_index_clear_sky_max,sunrise&hourly=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m,visibility&current=apparent_temperature,temperature_2m,is_day,relative_humidity_2m,weather_code,wind_direction_10m,wind_speed_10m,wind_gusts_10m,precipitation&timezone=auto", type: Weather.self)
             self.weatherDetails = decodedData
-            mapWeatherCodeToStatus((self.weatherDetails?.current.weather_code)!, type: 0)
+            mapWeatherCodeToStatus((self.weatherDetails?.current?.weather_code)!, type: 0)
             setIcons()
         } catch {
             handleError(error)
@@ -118,7 +119,7 @@ class ApiManager : ObservableObject {
             } else {
                 var statusArray = Weather.StatusArray(statusText: [], statusIcon: [], generalStatus: [])
                 if type == 1 {
-                    for code in weatherDetails?.hourly.weather_code ?? [] {
+                    for code in weatherDetails?.hourly?.weather_code ?? [] {
                         if let status = statusMapping[code] {
                             statusArray.statusText?.append(status.0)
                             statusArray.statusIcon?.append(status.1)
@@ -127,7 +128,7 @@ class ApiManager : ObservableObject {
                     }
                     weatherDetails?.statusList = statusArray
                 } else {
-                    for code in weatherDetails?.daily.weather_code ?? [] {
+                    for code in weatherDetails?.daily?.weather_code ?? [] {
                         if let status = statusMapping[code] {
                             statusArray.statusText?.append(status.0)
                             statusArray.statusIcon?.append(status.1)
@@ -144,10 +145,10 @@ class ApiManager : ObservableObject {
         }
     }
     func setIcons() {
-        for index in weatherDetails?.hourly.weather_code ?? [] {
+        for index in weatherDetails?.hourly?.weather_code ?? [] {
             mapWeatherCodeToStatus(index, type: 1)
         }
-        for index in weatherDetails?.daily.weather_code ?? [] {
+        for index in weatherDetails?.daily?.weather_code ?? [] {
             mapWeatherCodeToStatus(index, type: 2)
         }
     }

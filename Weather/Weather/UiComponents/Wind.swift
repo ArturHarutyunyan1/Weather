@@ -19,12 +19,12 @@ struct Wind: View {
                     HStack {
                         Text("Wind")
                         Spacer()
-                        Text("\(windSpeed, specifier: "%.1f") km/h")
+                        Text("\(windSpeed, specifier: "%.0f") km/h")
                     }
                     HStack {
                         Text("Gusts")
                         Spacer()
-                        Text("\(gusts, specifier: "%.1f") km/h")
+                        Text("\(gusts, specifier: "%.0f") km/h")
                     }
                     HStack {
                         Text("Direction")

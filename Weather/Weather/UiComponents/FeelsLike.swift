@@ -16,7 +16,7 @@ struct FeelsLike: View {
                 Text("Feels like")
                 Spacer()
             }
-            Text("\(temp, specifier: "%.1f")°")
+            Text("\(temp, specifier: "%.0f")°")
                 .font(.custom("Poppins-Medium", size: 50))
             Spacer()
         }

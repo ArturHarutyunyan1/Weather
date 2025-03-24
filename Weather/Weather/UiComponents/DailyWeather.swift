@@ -23,10 +23,12 @@ struct DailyForecast: View {
                     let max = daily.temperature_2m_max[index]
                     Text("\(min, specifier: "%.1f")°")
                     VStack {
-                        ProgressView("", value: min < 0 ? 0 : min, total: max)
-                            .tint(weatherStyle.backgroundColor)
-                        Spacer()
-                        Spacer()
+                        let minValue = daily.temperature_2m_min.min() ?? 0
+                        let normalizedMin = daily.temperature_2m_min[index] - minValue
+                        let normalizedMax = daily.temperature_2m_max[index] - minValue
+                        let progressValue = normalizedMin / (normalizedMax == 0 ? 1 : normalizedMax)
+                        ProgressView(value: progressValue)
+                                .tint(weatherStyle.backgroundColor)
                     }
                     Text("\(max, specifier: "%.1f")°")
                 }

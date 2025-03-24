@@ -16,7 +16,7 @@ struct UVIndex: View {
                 Text("UV Index")
                 Spacer()
             }
-            Text("\(index, specifier: "%.1f")")
+            Text("\(index, specifier: "%.0f")")
                 .font(.custom("Poppins-Medium", size: 50))
             Spacer()
         }

@@ -11,44 +11,53 @@ import MapKit
 struct ContentView: View {
     @EnvironmentObject private var apiManager: ApiManager
     @StateObject private var locationManager = LocationManager()
-    @State private var cities: [WeatherDetails] = []
+    @State private var cities: [Weather] = []
+    @State private var searchedCity: Weather? = nil
+    @State private var show: Bool = false
     var body: some View {
         GeometryReader {geometry in
             VStack {
-                if locationManager.status {
-                    if let details = apiManager.weatherDetails {
-                        WeatherDetailsView(weather: details)
-                    }
-                } else {
-                    SearchView(cities: $cities)
-                }
+                SearchView(cities: $cities, searchedCity: $searchedCity)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
+        .alert("\(locationManager.error)", isPresented: $show, actions: {
+            Button("OK") {}
+        })
         .onAppear {
             if CLLocationManager.locationServicesEnabled() {
                 locationManager.locationPermission()
             }
+            DispatchQueue.main.async {
+                if locationManager.status == false {
+                    show = true
+                }
+            }
         }
         .onChange(of: locationManager.status) {
-            if let lat = locationManager.latitude, let lon = locationManager.longitude, locationManager.status {
+            if let lat = locationManager.latitude,
+               let lon = locationManager.longitude {
                 Task {
                     await apiManager.reverseGeocoding(lat: lat, lon: lon)
-                    await apiManager.getWeatherDetails(latitude: lat, longitude: lon)
-                    if let city = apiManager.reversedResult?.address.city,
-                       let country = apiManager.reversedResult?.address.country,
-                       let id = apiManager.reversedResult?.place_id{
-                        if !cities.contains(where: {$0.id == id && $0.city == city && $0.country == country}) {
-                            let newCity = WeatherDetails(id: id, city: city, country: country, admin4: nil)
-                            cities.append(newCity)
-                            let encoder = JSONEncoder()
-                            if let encodedData = try? encoder.encode(cities) {
-                                UserDefaults.standard.set(encodedData, forKey: "cities")
+                    if let reversedResults = apiManager.reversedResult {
+                        await apiManager.getWeatherDetails(latitude: lat, longitude: lon)
+                        if var details = apiManager.weatherDetails {
+                            details.locationInfo = Weather.LocationInfo(id: reversedResults.place_id, city: reversedResults.address.city, country: reversedResults.address.country)
+                            searchedCity = details
+                            if !cities.contains(where: { $0.locationInfo?.id == reversedResults.place_id }) {
+                                cities.append(details)
                             }
+                            saveCities()
                         }
                     }
                 }
             }
+        }
+    }
+    private func saveCities() {
+        let encoder = JSONEncoder()
+        if let encodedData = try? encoder.encode(cities) {
+            UserDefaults.standard.set(encodedData, forKey: "cities")
         }
     }
 }

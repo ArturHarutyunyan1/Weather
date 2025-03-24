@@ -140,12 +140,18 @@ struct Weather : Codable {
         var statusIcon: [String]?
         var generalStatus: [String]?
     }
-    var current: Current
-    var hourly: Hourly
-    var daily: Daily
+    struct LocationInfo: Codable {
+        var id: Int
+        var city: String
+        var country: String
+    }
+    var current: Current?
+    var hourly: Hourly?
+    var daily: Daily?
     var status: Status?
     var statusList: StatusArray?
     var dailyList: StatusArray?
+    var locationInfo: LocationInfo?
 }
 
 
@@ -186,5 +192,21 @@ func getNightTimeBackground(for status: String) -> WeatherStyle {
     case "Rain": return WeatherBackground.rainyNight.style
     case "Snow": return WeatherBackground.snowyNight.style
     default: return WeatherBackground.sunnyEvening.style
+    }
+}
+
+func getBackgroundImage(for hour: Int, weather: Weather) -> WeatherStyle {
+    let status = weather.status?.generalStatus ?? "Clear"
+    switch hour {
+    case 6...18:
+        return getMorningTimeBackground(for: status)
+    case 12...18:
+        return getDayTimeBackground(for: status)
+    case 18...21:
+        return getEveningTimeBackground(for: status)
+    case 21...23, 0...5:
+        return getNightTimeBackground(for: status)
+    default:
+        return getDayTimeBackground(for: status)
     }
 }

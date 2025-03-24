@@ -14,6 +14,7 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var latitude: Double? = nil
     @Published var longitude: Double? = nil
     @Published var status: Bool = false
+    @Published var error: String = ""
     
     override init() {
         locationManager = CLLocationManager()
@@ -35,6 +36,9 @@ class LocationManager : NSObject, ObservableObject, CLLocationManagerDelegate {
         if status == .authorizedAlways || status == .authorizedWhenInUse {
             locationManager.startUpdatingLocation()
             self.status = true
+        } else {
+            self.status = false
+            self.error = "Your location services are disabled/declined. Please, allow them in settings in order to use application"
         }
     }
 }

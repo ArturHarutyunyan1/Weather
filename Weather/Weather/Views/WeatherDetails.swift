@@ -9,7 +9,6 @@ import SwiftUI
 
 struct WeatherDetailsView: View {
     var weather: Weather
-    @EnvironmentObject private var apiManager: ApiManager
     @State private var isActive: Bool = false
     @State private var weatherStyle: WeatherStyle = WeatherBackground.cloudyDay.style
     @State private var fullDate: String = ""
@@ -28,13 +27,13 @@ struct WeatherDetailsView: View {
             if isActive {
                 ScrollView {
                     VStack {
-                        if let icon = apiManager.weatherDetails?.status?.statusIcon,
-                           let temperature = apiManager.weatherDetails?.current.temperature_2m,
-                           let status = apiManager.weatherDetails?.status?.generalStatus,
-                           let city = apiManager.reversedResult?.address.city,
-                           let country = apiManager.reversedResult?.address.country,
-                           let apparent = apiManager.weatherDetails?.current.apparent_temperature,
-                           let wind = apiManager.weatherDetails?.current.wind_speed_10m {
+                        if let icon = weather.status?.statusIcon,
+                           let temperature = weather.current?.temperature_2m,
+                           let status = weather.status?.generalStatus,
+                           let city = weather.locationInfo?.city,
+                           let country = weather.locationInfo?.country,
+                           let apparent = weather.current?.apparent_temperature,
+                           let wind = weather.current?.wind_speed_10m {
                             CurrentWeather(
                                 icon: icon,
                                 temperature: temperature,
@@ -47,23 +46,23 @@ struct WeatherDetailsView: View {
                                 date: fullDate
                             )
                         }
-                        if let hourly = apiManager.weatherDetails?.hourly,
-                           let currentDate = apiManager.weatherDetails?.current.time.split(separator: "T").first {
-                            HourlyWeather(hourly: hourly, statusList: apiManager.weatherDetails?.statusList, currentDate: String(currentDate))
+                        if let hourly = weather.hourly,
+                           let currentDate = weather.current?.time.split(separator: "T").first {
+                            HourlyWeather(hourly: hourly, statusList: weather.statusList, currentDate: String(currentDate))
                         }
-                        if let daily = apiManager.weatherDetails?.daily {
-                            DailyForecast(daily: daily, statusList: apiManager.weatherDetails?.statusList, weatherStyle: weatherStyle)
+                        if let daily = weather.daily {
+                            DailyForecast(daily: daily, statusList: weather.statusList, weatherStyle: weatherStyle)
                         }
-                        if let wind = apiManager.weatherDetails?.current.wind_speed_10m,
-                           let gusts = apiManager.weatherDetails?.current.wind_gusts_10m,
-                           let direction = apiManager.weatherDetails?.current.wind_direction_10m {
+                        if let wind = weather.current?.wind_speed_10m,
+                           let gusts = weather.current?.wind_gusts_10m,
+                           let direction = weather.current?.wind_direction_10m {
                             Wind(windSpeed: wind, windDirection: direction, gusts: gusts, weatherStyle: weatherStyle)
                         }
                         HStack {
-                            if let temp = apiManager.weatherDetails?.current.apparent_temperature {
+                            if let temp = weather.current?.apparent_temperature {
                                 FeelsLike(temp: temp)
                             }
-                            if let index = apiManager.weatherDetails?.daily.uv_index_max.first {
+                            if let index = weather.daily?.uv_index_max.first {
                                 UVIndex(index: index)
                             }
                         }
@@ -84,9 +83,9 @@ struct WeatherDetailsView: View {
     }
     
     func getTimeOfTheDay() {
-        guard let time = weather.current.time.split(separator: "T").last,
+        guard let time = weather.current?.time.split(separator: "T").last,
               let hours = Int(time.split(separator: ":").first ?? "") else { return }
-        guard let date = weather.current.time.split(separator: "T").first else { return }
+        guard let date = weather.current?.time.split(separator: "T").first else { return }
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -95,22 +94,6 @@ struct WeatherDetailsView: View {
         dateFormatter.dateStyle = .full
         fullDate = dateFormatter.string(from: dateObject) + " \(time)"
         
-        weatherStyle = getBackgroundImage(for: hours)
-    }
-    
-    func getBackgroundImage(for hour: Int) -> WeatherStyle {
-        let status = weather.status?.generalStatus ?? "Clear"
-        switch hour {
-        case 6...18:
-            return getMorningTimeBackground(for: status)
-        case 12...18:
-            return getDayTimeBackground(for: status)
-        case 18...21:
-            return getEveningTimeBackground(for: status)
-        case 21...23, 0...5:
-            return getNightTimeBackground(for: status)
-        default:
-            return getDayTimeBackground(for: status)
-        }
+        weatherStyle = getBackgroundImage(for: hours, weather: weather)
     }
 }
