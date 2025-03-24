@@ -16,7 +16,6 @@ struct HourlyWeather: View {
         let filteredIndices = hourly.time.indices.filter {
             hourly.time[$0].split(separator: "T").first ?? "" == currentDate
         }
-
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(filteredIndices, id: \.self) { index in

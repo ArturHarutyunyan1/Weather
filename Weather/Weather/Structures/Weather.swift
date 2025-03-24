@@ -128,6 +128,7 @@ struct Weather : Codable {
         var temperature_2m_min: [Double]
         var sunset: [String]
         var sunrise: [String]
+        var uv_index_max: [Double]
     }
     struct Status : Codable {
         var statusText: String?

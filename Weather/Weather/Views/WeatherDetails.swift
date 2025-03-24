@@ -54,6 +54,19 @@ struct WeatherDetailsView: View {
                         if let daily = apiManager.weatherDetails?.daily {
                             DailyForecast(daily: daily, statusList: apiManager.weatherDetails?.statusList, weatherStyle: weatherStyle)
                         }
+                        if let wind = apiManager.weatherDetails?.current.wind_speed_10m,
+                           let gusts = apiManager.weatherDetails?.current.wind_gusts_10m,
+                           let direction = apiManager.weatherDetails?.current.wind_direction_10m {
+                            Wind(windSpeed: wind, windDirection: direction, gusts: gusts, weatherStyle: weatherStyle)
+                        }
+                        HStack {
+                            if let temp = apiManager.weatherDetails?.current.apparent_temperature {
+                                FeelsLike(temp: temp)
+                            }
+                            if let index = apiManager.weatherDetails?.daily.uv_index_max.first {
+                                UVIndex(index: index)
+                            }
+                        }
                     }
                     .padding(.vertical, 20)
                 }
