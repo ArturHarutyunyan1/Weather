@@ -43,7 +43,7 @@ struct ContentView: View {
                     await apiManager.reverseGeocoding(lat: lat, lon: lon)
                     if let reversedResults = apiManager.reversedResult {
                         await apiManager.getWeatherDetails(latitude: lat, longitude: lon)
-                        if var details = apiManager.weatherDetails {
+                        if let details = apiManager.weatherDetails {
                             apiManager.weatherDetails?.locationInfo = Weather.LocationInfo(id: reversedResults.place_id, city: reversedResults.address.city, country: reversedResults.address.country)
                             searchedCity = details
                             if !cities.contains(where: { $0.locationInfo?.id == reversedResults.place_id }) {

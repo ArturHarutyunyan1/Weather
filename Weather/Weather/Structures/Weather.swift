@@ -198,7 +198,7 @@ func getNightTimeBackground(for status: String) -> WeatherStyle {
 func getBackgroundImage(for hour: Int, weather: Weather) -> WeatherStyle {
     let status = weather.status?.generalStatus ?? "Clear"
     switch hour {
-    case 6...18:
+    case 6...12:
         return getMorningTimeBackground(for: status)
     case 12...18:
         return getDayTimeBackground(for: status)
