@@ -2,7 +2,11 @@
 
 ## Overview
 
-[Preview.mp4](Media/Preview.mp4)
+
+
+Uploading Preview.mp4…
+
+
 
 Weather App is an iOS application that provides real-time weather forecasts using the Open-Meteo REST API. Users can search for cities, view hourly weather data, and save their favorite cities for quicker access. The app also features dynamic background images and color themes that change based on the weather conditions, offering a visually immersive experience.
 
