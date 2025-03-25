@@ -1,13 +1,12 @@
+//
+//  SearchView.swift
+//  Weather
+//
+//  Created by Artur Harutyunyan on 21.03.25.
+//
+
 import SwiftUI
 import MapKit
-
-struct WeatherSearchResult: Identifiable, Codable {
-    let id: String
-    let name: String
-    let country: String
-    let latitude: Double
-    let longitude: Double
-}
 
 struct SearchView: View {
 
@@ -26,7 +25,7 @@ struct SearchView: View {
     private let citiesKey = "cities"
     
     var body: some View {
-        ZStack {
+        VStack {
             NavigationStack {
                 Group {
                     if isSearchFocused {
@@ -49,12 +48,7 @@ struct SearchView: View {
                     }
                 }
             }
-            .animation(.spring(response: 0.4, dampingFraction: 0.90, blendDuration: 0.2),
-                       value: selectedItem?.locationInfo?.id)
-            
-            if let selectedItem = selectedItem {
-                ExpandedCard(weather: $selectedItem, item: selectedItem, animation: animation)
-            }
+            .zIndex(0)
         }
         .sheet(isPresented: $isSheetPresented) {
             if let weather = searchedCity {
@@ -89,11 +83,7 @@ struct SearchView: View {
 
     
     private var citiesListView: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            ForEach(cities, id: \.locationInfo?.id) { city in
-                CardView(weather: $selectedItem, item: city, animation: animation)
-            }
-        }
+        CityList(cities: $cities)
     }
     
     private func selectSearchResult(_ result: Search.Results) {

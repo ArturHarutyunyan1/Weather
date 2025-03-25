@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F37B3C962D92C6E400389D67 /* FlowStack in Frameworks */ = {isa = PBXBuildFile; productRef = F37B3C952D92C6E400389D67 /* FlowStack */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		F36FC7532D8C9FEB0009141D /* Weather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F37B3C962D92C6E400389D67 /* FlowStack in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = Weather;
 			packageProductDependencies = (
+				F37B3C952D92C6E400389D67 /* FlowStack */,
 			);
 			productName = Weather;
 			productReference = F36FC7532D8C9FEB0009141D /* Weather.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = F36FC74A2D8C9FEB0009141D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F37B3C942D92C6E400389D67 /* XCRemoteSwiftPackageReference "FlowStack" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F36FC7542D8C9FEB0009141D /* Products */;
 			projectDirPath = "";
@@ -341,6 +350,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F37B3C942D92C6E400389D67 /* XCRemoteSwiftPackageReference "FlowStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/velos/FlowStack.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F37B3C952D92C6E400389D67 /* FlowStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F37B3C942D92C6E400389D67 /* XCRemoteSwiftPackageReference "FlowStack" */;
+			productName = FlowStack;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F36FC74B2D8C9FEB0009141D /* Project object */;
 }
