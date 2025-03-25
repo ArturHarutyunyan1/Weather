@@ -66,6 +66,22 @@ struct WeatherDetailsView: View {
                                 UVIndex(index: index)
                             }
                         }
+                        HStack {
+                            if let time = weather.daily?.sunset.first?.split(separator: "T").last {
+                                Sunset(time: String(time))
+                            }
+                            if let time = weather.daily?.sunrise.first?.split(separator: "T").last {
+                                Sunrise(time: String(time))
+                            }
+                        }
+                        HStack {
+                            if let visibility = weather.hourly?.visibility.first {
+                                Visibility(distance: visibility)
+                            }
+                            if let humidity = weather.current?.relative_humidity_2m {
+                                Humidity(humidity: Int(humidity))
+                            }
+                        }
                     }
                     .padding(.vertical, 20)
                 }

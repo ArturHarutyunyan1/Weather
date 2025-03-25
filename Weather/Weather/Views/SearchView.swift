@@ -16,12 +16,8 @@ struct SearchView: View {
     @StateObject private var locationManager = LocationManager()
     @Binding var cities: [Weather]
     @Binding var searchedCity: Weather?
-    
     @Namespace private var animation
     @State private var isSheetPresented: Bool = false
-    @State private var selectedItem: Weather? = nil
-    @State private var weatherStyle: WeatherStyle = WeatherBackground.cloudyDay.style
-    
     private let citiesKey = "cities"
     
     var body: some View {
@@ -99,6 +95,7 @@ struct SearchView: View {
                 searchedCity = weather
                 isSheetPresented = true
                 isSearchFocused = false
+                searchText = ""
             }
         }
     }
