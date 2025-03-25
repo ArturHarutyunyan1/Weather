@@ -27,7 +27,7 @@ struct SearchView: View {
                     if isSearchFocused {
                         searchResultsView
                     } else {
-                        citiesListView
+                        CityList(cities: $cities)
                     }
                 }
                 .navigationBarBackButtonHidden(true)
@@ -52,7 +52,10 @@ struct SearchView: View {
                 WeatherDetailsView(weather: weather)
             }
         }
-        .onAppear(perform: loadCities)
+        .onAppear{
+            loadCities()
+            print(cities)
+        }
     }
     
     private var searchResultsView: some View {
@@ -78,10 +81,6 @@ struct SearchView: View {
         }
     }
 
-    
-    private var citiesListView: some View {
-        CityList(cities: $cities)
-    }
     
     private func selectSearchResult(_ result: Search.Results) {
         Task {

@@ -12,7 +12,9 @@ struct WeatherDetailsView: View {
     @State private var isActive: Bool = false
     @State private var weatherStyle: WeatherStyle = WeatherBackground.cloudyDay.style
     @State private var fullDate: String = ""
-    
+    @State private var city: String = ""
+    @State private var country: String = ""
+    @EnvironmentObject var apiManager: ApiManager
     var body: some View {
         ZStack {
             weatherStyle.backgroundColor.edgesIgnoringSafeArea(.all)
@@ -30,8 +32,6 @@ struct WeatherDetailsView: View {
                         if let icon = weather.status?.statusIcon,
                            let temperature = weather.current?.temperature_2m,
                            let status = weather.status?.generalStatus,
-                           let city = weather.locationInfo?.city,
-                           let country = weather.locationInfo?.country,
                            let apparent = weather.current?.apparent_temperature,
                            let wind = weather.current?.wind_speed_10m {
                             CurrentWeather(
@@ -94,6 +94,14 @@ struct WeatherDetailsView: View {
         .onAppear {
             withAnimation(.easeInOut(duration: 0.5).delay(0.3)) {
                 isActive = true
+            }
+            if let cityName = apiManager.weatherDetails?.locationInfo?.city,
+               let countryName = apiManager.weatherDetails?.locationInfo?.country {
+                city = cityName
+                country = countryName
+            } else {
+                city = apiManager.reversedResult?.address.city ?? "Unknown"
+                country = apiManager.reversedResult?.address.country ?? "Unknown"
             }
             getTimeOfTheDay()
         }

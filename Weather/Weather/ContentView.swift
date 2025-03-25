@@ -14,27 +14,22 @@ struct ContentView: View {
     @State private var cities: [Weather] = []
     @State private var searchedCity: Weather? = nil
     @State private var show: Bool = false
-    
     var body: some View {
-        Group {
-            if locationManager.isPermissionChecked {
-                GeometryReader { geometry in
-                    VStack {
-                        SearchView(cities: $cities, searchedCity: $searchedCity)
-                    }
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .sheet(isPresented: $show) {
-                        if let details = apiManager.weatherDetails {
-                            WeatherDetailsView(weather: details)
-                        }
-                    }
+        GeometryReader {geometry in
+            VStack {
+                SearchView(cities: $cities, searchedCity: $searchedCity)
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .sheet(isPresented: $show) {
+                if let details = apiManager.weatherDetails {
+                    WeatherDetailsView(weather: details)
                 }
-            } else {
-                ProgressView("Checking permissions...")
             }
         }
         .onAppear {
-            locationManager.checkPermission()
+            if CLLocationManager.locationServicesEnabled() {
+                locationManager.locationPermission()
+            }
         }
         .onChange(of: locationManager.status) {
             if let lat = locationManager.latitude,
@@ -43,13 +38,22 @@ struct ContentView: View {
                     await apiManager.reverseGeocoding(lat: lat, lon: lon)
                     if let reversedResults = apiManager.reversedResult {
                         await apiManager.getWeatherDetails(latitude: lat, longitude: lon)
-                        if let details = apiManager.weatherDetails {
-                            apiManager.weatherDetails?.locationInfo = Weather.LocationInfo(id: reversedResults.place_id, city: reversedResults.address.city, country: reversedResults.address.country)
+                        if var details = apiManager.weatherDetails {
+                            // Update the details with the location info
+                            details.locationInfo = Weather.LocationInfo(id: reversedResults.place_id, city: reversedResults.address.city, country: reversedResults.address.country)
+                            
+                            // Assign the updated details to searchedCity
                             searchedCity = details
+                            
+                            // Append to cities array if not already there
                             if !cities.contains(where: { $0.locationInfo?.id == reversedResults.place_id }) {
                                 cities.append(details)
                             }
+                            
+                            // Save the cities
                             saveCities()
+                            
+                            // Show the weather details view
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 show = true
                             }
@@ -59,7 +63,6 @@ struct ContentView: View {
             }
         }
     }
-    
     private func saveCities() {
         let encoder = JSONEncoder()
         if let encodedData = try? encoder.encode(cities) {
