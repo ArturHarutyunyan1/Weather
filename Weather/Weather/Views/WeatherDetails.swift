@@ -72,6 +72,7 @@ struct WeatherDetailsView: View {
                 .scrollIndicators(.hidden)
                 .padding(.vertical, 30)
                 .frame(height: UIScreen.main.bounds.height)
+                .navigationBarBackButtonHidden(false)
             }
         }
         .onAppear {

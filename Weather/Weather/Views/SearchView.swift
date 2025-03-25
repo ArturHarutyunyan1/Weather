@@ -34,6 +34,7 @@ struct SearchView: View {
                         citiesListView
                     }
                 }
+                .navigationBarBackButtonHidden(true)
                 .navigationTitle("Weather")
                 .searchable(text: $searchText, prompt: Text("Search"))
                 .searchFocused($isSearchFocused)
